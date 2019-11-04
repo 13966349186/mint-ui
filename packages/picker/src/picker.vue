@@ -94,16 +94,7 @@
 
     created() {
       this.$on('slotValueChange', this.slotValueChange);
-      var slots = this.slots || [];
-      var values = [];
-      var valueIndexCount = 0;
-      slots.forEach(slot => {
-        if (!slot.divider) {
-          slot.valueIndex = valueIndexCount++;
-          values[slot.valueIndex] = (slot.values || [])[slot.defaultIndex || 0];
-          this.slotValueChange();
-        }
-      });
+      this.slotValueChange();
     },
 
     methods: {
@@ -131,7 +122,7 @@
       getSlotValue(index) {
         var slot = this.getSlot(index);
         if (slot) {
-          return slot.value;
+          return slot.currentValue;
         }
         return null;
       },
@@ -170,14 +161,19 @@
     },
 
     computed: {
-      values() {
-        var slots = this.slots || [];
-        var values = [];
-        slots.forEach(function(slot) {
-          if (!slot.divider) values.push(slot.value);
-        });
-
-        return values;
+      values: {
+        get() {
+          var slots = this.slots || [];
+          var values = [];
+          var valueIndexCount = 0;
+          slots.forEach(slot => {
+            if (!slot.divider) {
+              slot.valueIndex = valueIndexCount++;
+              values[slot.valueIndex] = (slot.values || [])[slot.defaultIndex || 0];
+            }
+          });
+          return values;
+        }
       },
       slotCount() {
         var slots = this.slots || [];
